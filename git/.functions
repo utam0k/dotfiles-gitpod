@@ -1,0 +1,27 @@
+function pull-main() {
+    git pull --ff-only origin main
+}
+
+function pull-master() {
+    git pull --ff-only origin master
+}
+
+function rebase-from-main() {
+    local branch=$(git branch --show-current)
+    git stash
+    git checkout main
+    git pull --ff-only origin main
+    git checkout "$branch"
+    git rebase main
+    git pop
+}
+
+function rebase-from-master() {
+    local branch=$(git branch --show-current)
+    git stash
+    git checkout main
+    git pull --ff-only origin master
+    git checkout "$branch"
+    git rebase main
+    git pop
+}

@@ -21,11 +21,11 @@ function watch-moving-pods() {
   watch "kubectl get pods -o wide --sort-by='.spec.nodeName' | grep -v Running"
 }
 
-function remove-finalizer {
+function remove-finalizer() {
   kubectl patch pod "$1" -p '{"metadata":{"finalizers":null}}'
 }
 
-function inspect-cluster {
+function inspect-cluster() {
   kubectl top nodes --sort-by=cpu | head
   kubectl top pods --sort-by=cpu | head
   kubectl get pods -o wide --sort-by='.spec.nodeName' | grep -v Running

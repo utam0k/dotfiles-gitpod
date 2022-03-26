@@ -1,14 +1,19 @@
 source ~/gcloud/.alias
+
 source ~/git/.alias
+source ~/git/.functions
+
 source ~/gitpod/.alias
-source ~/kubernetes/.alias
+source ~/gitpod/.functions
+
 source ~/system/.alias
 
-source ~/gitpod/.functions
+source ~/kubernetes/.env
+source ~/kubernetes/.alias
 source ~/kubernetes/.functions
+
 source ~/dev/.functions
 source ~/system/.functions
 
-source ~/kubernetes/.env
 source ~/nerdctl/.functions
 source ~/docker/.functions
