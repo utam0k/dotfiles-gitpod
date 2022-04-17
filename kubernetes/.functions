@@ -53,3 +53,7 @@ function delete-pod {
   fi
   kubectl delete pod --grace-period=0 --force --namespace "$2" "$1"
 }
+
+function top-pods {
+  watch "kubectl top pods --sort-by=cpu --all-namespaces | head -n 20"
+}
