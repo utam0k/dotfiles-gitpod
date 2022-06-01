@@ -19,9 +19,9 @@ function rebase-from-main() {
 function rebase-from-master() {
     local branch=$(git branch --show-current)
     git stash
-    git checkout main
+    git checkout master
     git pull --ff-only origin master
     git checkout "$branch"
-    git rebase main
+    git rebase master
     git stash pop
 }
