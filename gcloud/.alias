@@ -1,2 +1,4 @@
 alias gcp-auth="gcloud auth login --no-launch-browser"
 alias gcp-auth-app="gcloud auth application-default login --no-launch-browser"
+alias gcp-proj-set="gcloud config set project"
+alias gcp-proj-list="gcloud projects list"
