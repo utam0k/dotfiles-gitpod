@@ -1,4 +1,5 @@
 source ~/gcloud/.alias
+source ~/gcloud/.functions
 
 source ~/git/.alias
 source ~/git/.functions
