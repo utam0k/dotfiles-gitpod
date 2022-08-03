@@ -235,10 +235,51 @@ function workspace-count() {
 
 function get-workspace-details() {
   if [ -z "$1" ]; then
-    kubectl get pods --sort-by=.spec.nodeName  --selector=component=workspace -o jsonpath='{range .items[*]}{.metadata.labels.metaID}{"\t"}{.status.phase}{"\t"}{.metadata.name}{"\t\t"}{.spec.nodeName}{"\t"}{.spec.containers[].env[?(@.name=="GITPOD_GIT_USER_EMAIL")].value}{"\t"}{.spec.containers[].env[?(@.name=="GITPOD_WORKSPACE_CONTEXT_URL")].value}{"\n"}{end}'
+    kubectl get pods --sort-by=.spec.nodeName  --selector=component=workspace -o jsonpath='{range .items[*]}{.metadata.labels.metaID}{"\t"}{.status.phase}{"\t"}{.metadata.name}{"\t\t"}{.spec.nodeName}{"\t"}{.spec.containers[].env[?(@.name=="GITPOD_GIT_USER_EMAIL")].value}{"\t"}{.spec.containers[].env[?(@.name=="GITPOD_IDE_ALIAS")].value}{"\t"}{.spec.containers[].env[?(@.name=="GITPOD_WORKSPACE_CONTEXT_URL")].value}{"\n"}{end}'
     return
   fi
 
   kubectl get pods "$1" --sort-by=.spec.nodeName  --selector=component=workspace -o jsonpath='{range .items[*]}{.metadata.labels.metaID}{"\t"}{.status.phase}{"\t"}{.metadata.name}{"\t\t"}{.spec.nodeName}{"\t"}{.spec.containers[].env[?(@.name=="GITPOD_GIT_USER_EMAIL")].value}{"\t"}{.spec.containers[].env[?(@.name=="GITPOD_WORKSPACE_CONTEXT_URL")].value}{"\n"}{end}'
+}
+
+function minio-login() {
+  local username=$(kubectl get secrets minio -o jsonpath="{.data.root-user}" | base64 -d)
+  local password=$(kubectl get secrets minio -o jsonpath="{.data.root-password}" | base64 -d)
+
+  echo "username: ${username}"
+  echo "password: ${password}"
+}
+
+function db-login() {
+  local username=$(kubectl get secrets mysql -o jsonpath="{.data.username}" | base64 -d)
+  local password=$(kubectl get secrets mysql -o jsonpath="{.data.password}" | base64 -d)
+
+  echo "username: ${username}"
+  echo "password: ${password}"
+}
+
+function forward-minio() {
+  local local_port=9001
+  if [ -n "$1" ]; then
+    local_port="$1"
+  fi
+
+  kubectl port-forward deploy/minio "$local_port":9001
+}
+
+function forward-db() {
+  local local_port=3306
+  if [ -n "$1" ]; then
+    local_port="$1"
+  fi
+
+  kubectl port-forward statefulset/mysql "$local_port":3306
+}
+
+function ssh-ws-node() {
+  gcloud config set project workspace-clusters
+  gcloud config unset compute/region
+  gcloud config unset compute/zone
+  gcloud compute ssh "$1" --ssh-flag="-p 2222"
 }
 
