@@ -283,3 +283,9 @@ function ssh-ws-node() {
   gcloud compute ssh "$1" --ssh-flag="-p 2222"
 }
 
+function gitpod-functions() {
+  echo "ssh-ws-node $1"
+  echo "forward-db"
+  echo "get-workspace-details $1"
+  echo "workspace-count"
+}
