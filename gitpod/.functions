@@ -18,7 +18,7 @@ function exec-daemon() {
         kubectl exec -it "$i" -c ws-daemon -- sh -c "cd /mnt/workingarea;sh"
         return
       done
-      return 
+      return
     fi
 
     kubectl exec -it "$daemon" -c ws-daemon -- sh -c "cd /mnt/workingarea;sh"
@@ -39,7 +39,7 @@ function exec-host() {
         kubectl exec -it "$i" -c ws-daemon -- sh -c "nsenter -t 1 -p -u -m -n bash"
         return
       done
-      return 
+      return
     fi
 
     kubectl exec -it "$daemon" -c ws-daemon -- sh -c "nsenter -t 1 -p -u -m -n bash"
@@ -149,6 +149,7 @@ function ssh-ws-node() {
   gcloud config set project workspace-clusters
   gcloud config unset compute/region
   gcloud config unset compute/zone
+  gcloud config set project workspace-clusters
   gcloud compute ssh "$1" --ssh-flag="-p 2222"
 }
 
@@ -216,4 +217,8 @@ function node-ws-count() {
 
 function node-prebuild-count() {
   kubectl get pods -o wide --sort-by=.spec.nodeName -o custom-columns=:.spec.nodeName --selector workspaceType=prebuild | grep "\S" | uniq -c | sort -nr -k1,1
+}
+
+function watch-prebuilds() {
+  watch "kubectl get pods -o wide --sort-by=.spec.nodeName | grep prebuild"
 }

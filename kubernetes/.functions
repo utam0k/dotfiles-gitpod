@@ -7,7 +7,7 @@ function node-pods() {
 # Shows how many pods are running on each node in the cluster
 # Usage: node-pod-count
 function node-pod-count() {
-  kubectl get pods -o wide --all-namespaces --sort-by=.spec.nodeName -o custom-columns=:.spec.nodeName  | grep "\S" | uniq -c | sort -nr -k1,1 
+  kubectl get pods -o wide --all-namespaces --sort-by=.spec.nodeName -o custom-columns=:.spec.nodeName  | grep "\S" | uniq -c | sort -nr -k1,1
 }
 
 # Shows all failed pods in the cluster and the reason for the failure (if a failure reason has been recorded)
@@ -15,4 +15,41 @@ function node-pod-count() {
 function failed-pods() {
   kubectl get pods --all-namespaces --field-selector status.phase=Failed \
   -o custom-columns=NAMESPACE:.metadata.namespace,NAME:.metadata.name,REASON:.status.reason "$@"
+}
+
+function watch-moving-pods() {
+  watch "kubectl get pods -o wide --sort-by='.spec.nodeName' | grep -v Running"
+}
+
+function remove-finalizer {
+  kubectl patch pod "$1" -p '{"metadata":{"finalizers":null}}'
+}
+
+function inspect-cluster {
+  kubectl top nodes --sort-by=cpu | head
+  kubectl top pods --sort-by=cpu | head
+  kubectl get pods -o wide --sort-by='.spec.nodeName' | grep -v Running
+  kubectl get events --sort-by=.metadata.creationTimestamp | head -n 20
+}
+
+function enter-pod {
+  if [ -z "$2" ]; then
+      kubectl exec -it "$1" -- sh
+      return
+  fi
+
+  if [ -z "$3" ]; then
+      kubectl exec -it "$1" -c "$2" -- sh
+      return
+  fi
+
+  kubectl exec -it "$1" -c "$2" -n "$3" -- sh
+}
+
+function delete-pod {
+  if [ -z "$2" ]; then
+      kubectl delete pod --grace-period=0 --force "$1"
+      return
+  fi
+  kubectl delete pod --grace-period=0 --force --namespace "$2" "$1"
 }

@@ -1,0 +1,7 @@
+function d-run() {
+    docker run -it --rm "$1"
+}
+
+function d-exec() {
+    docker exec -e COLUMNS=200 -it "$1" sh
+}

@@ -1,0 +1,8 @@
+function n-exec() {
+    if [ -z "$2" ]; then
+      nerdctl exec --namespace k8s.io -e COLUMNS=200 -it $1 sh
+      return
+    fi
+
+    nerdctl exec --namespace "$2" -e COLUMNS=200 -it "$1" sh
+}
