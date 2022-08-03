@@ -224,3 +224,12 @@ function node-prebuild-count() {
 function watch-prebuilds() {
   watch "kubectl get pods -o wide --sort-by=.spec.nodeName | grep prebuild"
 }
+
+function top-workspaces() {
+  watch "kubectl top pods -l component=workspace --sort-by=cpu | head -n 20"
+}
+
+function workspace-count() {
+  kubectl get pods -o wide -l component=workspace --sort-by=.spec.nodeName -o custom-columns=:.spec.nodeName  | grep "\S" | uniq -c | sort -nr -k1,1
+}
+
